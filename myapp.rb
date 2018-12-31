@@ -4,5 +4,5 @@ require 'sass'
 require 'haml'
 
 get '/' do
-  "<h1>hello world!</h1>"
+  erb :index
 end

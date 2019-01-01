@@ -6,3 +6,6 @@ vendor/bundle
 
 /log/*
 /tmp/*
+
+# Ignore private data (pass, API key etc.)
+database.yml

@@ -2,14 +2,14 @@
 <html lang="ja">
 <head>
 	<meta charset="utf-8">
-	<title>Sample numlist</title>
+	<title><%= @title %></title>
 </head>
 
 <body>
-	<h1>偶数かどうか</h1>
+	<h1><%= @title %></h1>
 	<ul>
-		<% 20.times do |i| %>
-		<%= "<li> #{i}: #{i.even?}</li>" %>
+		<% @tags.each do |tag| %>
+		<%= "<li> #{tag.name}: #{tag.num_likes}</li>" %>
 		<% end %>
 	</ul>
 </body>

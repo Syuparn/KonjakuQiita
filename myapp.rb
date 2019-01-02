@@ -3,7 +3,7 @@ require 'sinatra/reloader'
 require 'sass'
 require 'haml'
 require 'sinatra/activerecord'
-require './models/tag.rb'
+require './models/tag'
 
 Tag.delete_all
 # mock data

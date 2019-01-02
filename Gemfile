@@ -12,3 +12,4 @@ gem "pg"
 gem "activerecord"
 gem "sinatra-activerecord"
 gem "rake"
+gem 'whenever', :require => false

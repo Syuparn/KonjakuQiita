@@ -9,7 +9,7 @@ namespace :sample do
 
   desc "make new tag data in db"
   task :create_tag do
-    Tag.create(name: 'Ruby', num_likes: 10)
+    Tag.create(name: 'Ruby', num_articles: 10)
   end
 
   desc "destroy tag data in db"

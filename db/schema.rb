@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_01_083845) do
+ActiveRecord::Schema.define(version: 2019_01_03_075120) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "tags", force: :cascade do |t|
     t.string "name"
-    t.integer "num_likes"
+    t.integer "num_articles"
   end
 
 end

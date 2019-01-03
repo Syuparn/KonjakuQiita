@@ -7,6 +7,6 @@ require './models/tag'
 
 get '/' do
   @title = "show tags"
-  @tags = Tag.order("num_likes desc").all
+  @tags = Tag.order("num_articles desc").all
   erb :index
 end

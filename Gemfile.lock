@@ -14,7 +14,6 @@ GEM
       tzinfo (~> 1.1)
     arel (9.0.0)
     backports (3.11.4)
-    chronic (0.10.2)
     concurrent-ruby (1.1.4)
     ffi (1.9.25)
     haml (5.0.4)
@@ -58,8 +57,6 @@ GEM
     tilt (2.0.9)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
-    whenever (0.10.0)
-      chronic (>= 0.6.3)
 
 PLATFORMS
   ruby
@@ -73,7 +70,6 @@ DEPENDENCIES
   sinatra
   sinatra-activerecord
   sinatra-contrib
-  whenever
 
 BUNDLED WITH
    1.16.2

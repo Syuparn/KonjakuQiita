@@ -16,7 +16,7 @@ namespace :qiita_api do
 
   def record_tags(tags)
     if tags.size != NUM_TAGS
-      # somehow failed to fetch all tags, so skip updating
+      # if failed to fetch all tags, skip updating
       return
     end
 

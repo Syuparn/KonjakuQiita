@@ -9,11 +9,11 @@ namespace :sample do
 
   desc "make new tag data in db"
   task :create_tag do
+    Tag.create(name: 'Ruby', num_likes: 10)
+  end
+
+  desc "destroy tag data in db"
+  task :destroy_tag do
     Tag.delete_all
-    # mock data
-    results = [['Ruby', 10], ['Python', 12], ['PHP', 4], ['js', 2]]
-    results.each do |result|
-      Tag.create(name: result[0], num_likes: result[1])
-    end
   end
 end

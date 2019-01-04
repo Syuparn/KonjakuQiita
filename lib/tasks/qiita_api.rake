@@ -7,6 +7,7 @@ require './models/article'
 
 namespace :qiita_api do
   NUM_TAGS = 100
+  PER_PAGE = 100
   NUM_SELECTED_ARTICLES = 10
 
   def fetch_tags()
@@ -20,6 +21,7 @@ namespace :qiita_api do
   def record_tags(tags)
     if tags.size != NUM_TAGS
       # if failed to fetch all tags, skip updating
+      p "failed to fetch tags by qiita API"
       return
     end
 
@@ -29,10 +31,18 @@ namespace :qiita_api do
     end
   end
 
-  def fetch_articles(tag)
-    # TODO: get tag arg as hash {name:, num_articles:} (now tag name string)
-    i = 1 #newest
-    uri = "https://qiita.com/api/v2/items?page=#{i}&per_page=100&query=tag:#{tag}"
+  def fetch_articles(tag_name, is_new:)
+    max_page = Tag.find_by(name: tag_name).num_articles.div(PER_PAGE)
+    # TODO: fetch also max_page + 1
+    if is_new
+      # latest articles
+      page = 1
+    else
+      # oldest articles (NOTE: page = 100 is oldest page API can handle)
+      page = [max_page, 100].min
+    end
+
+    uri = "https://qiita.com/api/v2/items?page=#{page}&per_page=#{PER_PAGE}&query=tag:#{tag_name}"
     f = open(
       URI.encode(uri),
       'Content-Type' => 'application/json'
@@ -76,6 +86,13 @@ namespace :qiita_api do
     end
   end
 
+  def update_articles(tag, is_new:)
+    articles = fetch_articles(tag, is_new: is_new)
+    # pick up NUM_SELECTED_ARTICLES articles which have the most likes
+    selected_articles = articles.sort_by{|a| a['likes_count']}.reverse![0..NUM_SELECTED_ARTICLES-1]
+    record_articles(tag, selected_articles, is_new: is_new)
+  end
+
   desc "update tag table (the most popular #{NUM_TAGS}) by Qiita API"
   task :update_tags do
     # already sorted by items_count (= num_articles)
@@ -85,12 +102,10 @@ namespace :qiita_api do
 
   desc "update article table by Qiita API"
   task :update_articles do
-    articles = fetch_articles('Ruby')
-    # pick up NUM_SELECTED_ARTICLES articles which have the most likes
-    selected_articles = articles.sort_by{|a| a['likes_count']}.reverse![0..NUM_SELECTED_ARTICLES-1]
-
-    record_articles('Ruby', selected_articles, is_new: true)
-    #TODO: old articles
+    update_articles('Ruby', is_new: true)
+    update_articles('Ruby', is_new: false)
+    update_articles('Heroku', is_new: true)
+    update_articles('Heroku', is_new: false)
   end
 
   desc "delete all in article table"

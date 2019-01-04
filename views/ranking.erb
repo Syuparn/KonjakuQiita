@@ -10,7 +10,14 @@
   <h2>In the latest 100</h2>
 	<ul>
 		<% @new_articles.each do |article| %>
-		<%= "<li> #{article.name}: #{article.num_likes} #{article.tag1} #{article.tag2} #{article.tag3} #{article.tag4} #{article.tag5}</li>" %>
+		<%= "<li> #{article.name}: #{article.num_likes} #{article.tag1} #{article.tag2} #{article.tag3} #{article.tag4} #{article.tag5} #{article.created_at}</li>" %>
+		<% end %>
+	</ul>
+
+  <h2>In the oldest 100</h2>
+	<ul>
+		<% @old_articles.each do |article| %>
+		<%= "<li> #{article.name}: #{article.num_likes} #{article.tag1} #{article.tag2} #{article.tag3} #{article.tag4} #{article.tag5} #{article.created_at}</li>" %>
 		<% end %>
 	</ul>
 </body>

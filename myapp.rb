@@ -16,6 +16,6 @@ get '/ranking/*' do |tag_name|
   @tag = tag_name
   @title = "今昔ランキング: #{@tag}"
   @new_articles = Article.where(tag1: @tag).where(new?: true).all
-  #@old_articles = Article.where(tag1: @tag).where(new?: false).all
+  @old_articles = Article.where(tag1: @tag).where(new?: false).all
   erb :ranking
 end

@@ -84,10 +84,13 @@ namespace :qiita_api do
   end
 
   desc "update article table by Qiita API"
-  task :update_new_articles do
+  task :update_articles do
     articles = fetch_articles('Ruby')
-    #TODO: sort by likes_count
-    record_articles('Ruby', articles[0..9], is_new: true)
+    # pick up NUM_SELECTED_ARTICLES articles which have the most likes
+    selected_articles = articles.sort_by{|a| a['likes_count']}.reverse![0..NUM_SELECTED_ARTICLES-1]
+
+    record_articles('Ruby', selected_articles, is_new: true)
+    #TODO: old articles
   end
 
   desc "delete all in article table"

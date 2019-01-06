@@ -128,12 +128,6 @@ namespace :qiita_api do
     end
   end
 
-  desc "just mock"
-  task :update_articles_mock do
-    update_articles("Git", is_new: true)
-    update_articles("Git", is_new: false)
-  end
-
   desc "delete all in article table"
   #TODO: move to other rake
   task :reset_articles! do

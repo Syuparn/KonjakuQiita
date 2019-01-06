@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-	<meta charset="utf-8">
-	<title><%= @title %></title>
+  <meta charset="utf-8">
+  <title><%= @title %></title>
 </head>
 
 <body>
-	<h1><%= @title %></h1>
-	<ul>
-		<% @tags.each do |tag| %>
-		<%= "<li> #{tag.name}: #{tag.num_articles}</li>" %>
-		<% end %>
-	</ul>
+  <h1><%= @title %></h1>
+  <ul>
+    <% @tags.each do |tag| %>
+    <%= "<li> #{tag.name}: #{tag.num_articles}</li>" %>
+    <% end %>
+  </ul>
 </body>

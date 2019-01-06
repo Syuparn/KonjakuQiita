@@ -32,20 +32,9 @@ namespace :qiita_api do
     end
   end
 
-  def fetch_articles(tag_name, is_new:)
-    max_page = Tag.find_by(name: tag_name).num_articles.div(PER_PAGE)
-    # TODO: fetch also max_page + 1
-    if is_new
-      # latest articles
-      page = 1
-    else
-      # oldest articles (NOTE: page = 100 is oldest page API can handle)
-      page = [max_page, 100].min
-    end
-
-    uri = "https://qiita.com/api/v2/items?page=#{page}&per_page=#{PER_PAGE}&query=tag:#{tag_name}"
+  def fetch_articles(tag_name, page_num)
     f = open(
-      URI.encode(uri),
+      "https://qiita.com/api/v2/items?page=#{page_num}&per_page=#{PER_PAGE}&query=tag:#{tag_name}",
       'Content-Type' => 'application/json'
     )
     JSON.parse(f.read)
@@ -88,7 +77,22 @@ namespace :qiita_api do
   end
 
   def update_articles(tag, is_new:)
-    articles = fetch_articles(tag, is_new: is_new)
+    if is_new
+      # latest articles
+      page_num = 1
+      articles = fetch_articles(tag, page_num)
+    else
+      max_page = Tag.find_by(name: tag).num_articles.div(PER_PAGE) + 1
+      # oldest articles (NOTE: page = 100 is oldest page API can handle)
+      page_num = [max_page, 100].min
+      # page (max_page) may have less articles than PER_PAGE
+      # so fetch also page (max_page - 1)
+      articles1 = fetch_articles(tag, page_num)
+      sleep(5)
+      articles2 = fetch_articles(tag, page_num - 1)
+      # oldest PER_PAGE articles (articles1 and 2 are newer created_at order)
+      articles = (articles2 + articles1).reverse![0..PER_PAGE - 1]
+    end
     # pick up NUM_SELECTED_ARTICLES articles which have the most likes
     selected_articles = articles.sort_by{|a| a['likes_count']}.reverse![0..NUM_SELECTED_ARTICLES-1]
     record_articles(tag, selected_articles, is_new: is_new)
@@ -122,6 +126,12 @@ namespace :qiita_api do
       update_articles(tag_name, is_new: false)
       sleep(5)
     end
+  end
+
+  desc "just mock"
+  task :update_articles_mock do
+    update_articles("Git", is_new: true)
+    update_articles("Git", is_new: false)
   end
 
   desc "delete all in article table"

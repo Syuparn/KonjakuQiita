@@ -1,6 +1,7 @@
 require 'open-uri'
 require 'json'
 require 'uri'
+require 'date'
 # require is relative to root path
 require './models/tag'
 require './models/article'
@@ -93,6 +94,18 @@ namespace :qiita_api do
     record_articles(tag, selected_articles, is_new: is_new)
   end
 
+  def todays_updating_range(n_max)
+    # separate range of length n_max (0..n_max-1) into 7 days
+    # Sun: 0..n_max/7-1, Mon: n_max/7..2*n_max/7-1, ... Sat: 6*n_max/7..n_max-1
+    # this is used for Heroku Scheduler, which only supports 1-day each task
+    day = DateTime.now.wday
+    if day == 6 # Sat
+      (day * n_max.div(7))..(n_max - 1)
+    else
+      (day * n_max.div(7))..((day + 1) * n_max.div(7) - 1)
+    end
+  end
+
   desc "update tag table (the most popular #{NUM_TAGS}) by Qiita API"
   task :update_tags do
     # already sorted by items_count (= num_articles)
@@ -102,10 +115,13 @@ namespace :qiita_api do
 
   desc "update article table by Qiita API"
   task :update_articles do
-    update_articles('Ruby', is_new: true)
-    update_articles('Ruby', is_new: false)
-    update_articles('Heroku', is_new: true)
-    update_articles('Heroku', is_new: false)
+    tag_names = Tag.order("num_articles desc").all.map { |t| t.name }
+    tag_names[todays_updating_range(NUM_TAGS)].each do |tag_name|
+      update_articles(tag_name, is_new: true)
+      sleep(5)
+      update_articles(tag_name, is_new: false)
+      sleep(5)
+    end
   end
 
   desc "delete all in article table"

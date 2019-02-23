@@ -2,22 +2,22 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <title><%= @title %></title>
+  <title><%= "今昔ランキング: #{@tag}" %></title>
 </head>
 
 <body>
   <h1><%= "#{@tag} いいね best10" %></h1>
   <h2>In the latest 100</h2>
   <ul>
-    <% @new_articles.each do |article| %>
-    <%= "<li> #{article.name}: #{article.num_likes} #{article.tag1} #{article.tag2} #{article.tag3} #{article.tag4} #{article.tag5} #{article.created_at}</li>" %>
+    <% @new_articles.each_with_index do |article, i| %>
+    <%= "<li>#{i+1}th #{article.name}: #{article.num_likes} #{article.tag1} #{article.tag2} #{article.tag3} #{article.tag4} #{article.tag5} #{article.created_at}</li>" %>
     <% end %>
   </ul>
 
   <h2>In the oldest 100</h2>
   <ul>
-    <% @old_articles.each do |article| %>
-    <%= "<li> #{article.name}: #{article.num_likes} #{article.tag1} #{article.tag2} #{article.tag3} #{article.tag4} #{article.tag5} #{article.created_at}</li>" %>
+    <% @old_articles.each_with_index do |article, i| %>
+    <%= "<li>#{i+1}th #{article.name}: #{article.num_likes} #{article.tag1} #{article.tag2} #{article.tag3} #{article.tag4} #{article.tag5} #{article.created_at}</li>" %>
     <% end %>
   </ul>
 </body>

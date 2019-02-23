@@ -7,15 +7,17 @@ require './models/tag'
 require './models/article'
 
 get '/' do
-  @title = "show tags"
   @tags = Tag.order("num_articles desc").all
   erb :index
 end
 
+get '/sample' do
+  erb :sample
+end
+
 get '/ranking/*' do |tag_name|
   @tag = tag_name
-  @title = "今昔ランキング: #{@tag}"
-  @new_articles = Article.where(tag1: @tag).where(new?: true).all
-  @old_articles = Article.where(tag1: @tag).where(new?: false).all
+  @new_articles = Article.where(tag1: @tag).where(new?: true).order("num_likes desc").all[0..9]
+  @old_articles = Article.where(tag1: @tag).where(new?: false).order("num_likes desc").all[0..9]
   erb :ranking
 end

@@ -9,11 +9,12 @@ require './models/article'
 namespace :qiita_api do
   NUM_TAGS = 100
   PER_PAGE = 100
-  NUM_SELECTED_ARTICLES = 10
+  # NOTE: page = 100 is oldest page API can handle)
+  MAX_PAGES = 100
 
-  def fetch_tags()
+  def fetch_tags(page_num)
     f = open(
-      "https://qiita.com/api/v2/tags?page=1&per_page=#{NUM_TAGS}&sort=count",
+      "https://qiita.com/api/v2/tags?page=#{page_num}&per_page=#{NUM_TAGS}&sort=count",
       'Content-Type' => 'application/json',
     )
     JSON.parse(f.read)
@@ -32,70 +33,79 @@ namespace :qiita_api do
     end
   end
 
-  def fetch_articles(tag_name, page_num)
-    f = open(
-      "https://qiita.com/api/v2/items?page=#{page_num}&per_page=#{PER_PAGE}&query=tag:#{tag_name}",
-      'Content-Type' => 'application/json'
-    )
+  def assign_date_to_tag(tag_name, date)
+    tag = Tag.find_by(name: tag_name)
+    tag.update(created_at: date)
+  end
+
+  def fetch_articles(tag_name, page_num, before: nil)
+    uri = "https://qiita.com/api/v2/items?page=#{page_num}&per_page=#{PER_PAGE}&query=tag:#{tag_name}"
+    uri += "+created:<=#{before}" if before
+    begin
+      f = open(uri, 'Content-Type' => 'application/json')
+    rescue OpenURI::HTTPError => e
+      p "error raised when fetching #{uri}"
+      p e
+      return {}
+    end
     JSON.parse(f.read)
   end
 
-  def record_articles(tag_name, articles, is_new:)
-    if articles.length != NUM_SELECTED_ARTICLES
-      # if failed to fetch all articles, skip updating
-      p "failed to fetch articles of tag: #{tag_name} by qiita API"
-      return
-    end
+  def record_article(tag_name, article)
     # delete current records
-    Article.where(tag1: tag_name).where(new?: is_new).delete_all()
+    Article.where(tag1: tag_name).delete_all()
 
-    # make updated records
-    articles.each do |article|
-      # article['tags'] is array like [{'name': 'tag1', 'versions', []}, ...]
-      # tags in article['tags'] except tag_name(given by arg)
-      other_tags = article['tags'].map { |tag|  tag['name']}
-      other_tags.delete(tag_name)
+    # article['tags'] is array like [{'name': 'tag1', 'versions', []}, ...]
+    # tags in article['tags'] except tag_name(given by arg)
+    other_tags = article['tags'].map { |tag|  tag['name']}
+      .tap { |tags| tags.delete(tag_name)}
 
-      # each article has at most 5 tags
-      # https://help.qiita.com/ja/articles/qiita-tagging
-      Article.create(
-        name: article['title'],
-        num_likes: article['likes_count'],
-        tag1: tag_name,
-        tag2: other_tags[0] || nil,
-        tag3: other_tags[1] || nil,
-        tag4: other_tags[2] || nil,
-        tag5: other_tags[3] || nil,
-        url: article['url'],
-        created_at: article['created_at'],
-        updated_at: article['updated_at'],
-        author_id: article['id'],
-        author_name: article['name'],
-        new?: is_new
-      )
-    end
+    # each article has at most 5 tags
+    # https://help.qiita.com/ja/articles/qiita-tagging
+    Article.create(
+      name: article['title'],
+      num_likes: article['likes_count'],
+      tag1: tag_name,
+      tag2: other_tags[0] || nil,
+      tag3: other_tags[1] || nil,
+      tag4: other_tags[2] || nil,
+      tag5: other_tags[3] || nil,
+      url: article['url'],
+      created_at: article['created_at'],
+      updated_at: article['updated_at'],
+      author_id: article['id'],
+      author_name: article['name']
+    )
   end
 
-  def update_articles(tag, is_new:)
-    if is_new
-      # latest articles
-      page_num = 1
-      articles = fetch_articles(tag, page_num)
+  def update_articles(tag)
+    num_pages = Tag.find_by(name: tag).num_articles.div(PER_PAGE) + 1
+
+    if num_pages <= MAX_PAGES
+      articles = fetch_articles(tag, num_pages)
+      record_article(tag, articles[-1])
+      assign_date_to_tag(tag, articles[-1]['created_at'])
     else
-      max_page = Tag.find_by(name: tag).num_articles.div(PER_PAGE) + 1
-      # oldest articles (NOTE: page = 100 is oldest page API can handle)
-      page_num = [max_page, 100].min
-      # page (max_page) may have less articles than PER_PAGE
-      # so fetch also page (max_page - 1)
-      articles1 = fetch_articles(tag, page_num)
-      sleep(5)
-      articles2 = fetch_articles(tag, page_num - 1)
-      # oldest PER_PAGE articles (articles1 and 2 are newer created_at order)
-      articles = (articles2 + articles1).reverse![0..PER_PAGE - 1]
+      # fetch 100 pages each
+      # 1. get date when oldest article in this 100 pages was created at
+      # 2. fetch 100 article pages which is created BEFORE date from 1.
+      # 3. return to 1.
+      threshold_date = (1..num_pages.div(MAX_PAGES)).to_a.reduce(nil) { |date, _|
+        articles = fetch_articles(tag, MAX_PAGES, before: date)
+        articles[-1]['created_at'].match('\d\d\d\d\-\d\d-\d\d')[0]
+      }
+      # refrain from page_num == 0
+      page_num = [num_pages % MAX_PAGES, 1].max
+      articles = fetch_articles(tag, page_num, before: threshold_date)
+      # check next page too (page number gap may occur
+      # because pages created at threshold_date are counted twice)
+      if articles.length == PER_PAGE && page_num < MAX_PAGES
+        older_articles = fetch_articles(tag, page_num + 1, before: threshold_date)
+        articles = older_articles if older_articles.length > 0
+      end
+      record_article(tag, articles[-1])
+      assign_date_to_tag(tag, articles[-1]['created_at'])
     end
-    # pick up NUM_SELECTED_ARTICLES articles which have the most likes
-    selected_articles = articles.sort_by{|a| a['likes_count']}.reverse![0..NUM_SELECTED_ARTICLES-1]
-    record_articles(tag, selected_articles, is_new: is_new)
   end
 
   def todays_updating_range(n_max)
@@ -113,7 +123,8 @@ namespace :qiita_api do
   desc "update tag table (the most popular #{NUM_TAGS}) by Qiita API"
   task :update_tags do
     # already sorted by items_count (= num_articles)
-    new_tags = fetch_tags()
+    #TODO: change page_num by date
+    new_tags = fetch_tags(1)
     record_tags(new_tags)
   end
 
@@ -121,9 +132,7 @@ namespace :qiita_api do
   task :update_articles do
     tag_names = Tag.order("num_articles desc").all.map { |t| t.name }
     tag_names[todays_updating_range(NUM_TAGS)].each do |tag_name|
-      update_articles(tag_name, is_new: true)
-      sleep(5)
-      update_articles(tag_name, is_new: false)
+      update_articles(tag_name)
       sleep(5)
     end
   end

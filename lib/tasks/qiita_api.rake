@@ -27,9 +27,9 @@ namespace :qiita_api do
       return
     end
 
-    Tag.delete_all
     tags.each do |tag|
-      Tag.create(name: tag['id'], num_articles: tag['items_count'].to_i)
+      tag_record = Tag.find_or_initialize_by(name: tag['id'])
+      tag_record.update(num_articles: tag['items_count'].to_i)
     end
   end
 

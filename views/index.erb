@@ -14,13 +14,13 @@
   <div class="container">
     <div class="page-header bg-success text-white">
       <h1>Konjaku(今昔)Qiita</h1>
-      <p class="lead">~Best 10で当時を振り返る~</p>
+      <p class="lead">~あのタグはいつできた？タグから歴史を振り返る~</p>
     </div>
 
     <div class="row">
       <% @tags.each do |tag| %>
       <%= %Q{<div class="col-6 col-md-3 col-lg-2 mt-1 mb-1 ml-1 mr-1">} %>
-        <%= %Q{<a class="btn btn-success" href="./ranking/#{tag.name}">#{tag.name}: #{tag.num_articles}</a>} %>
+        <%= %Q{<a class="btn btn-success" href="./ranking/#{tag.name}">#{tag.name}: #{tag.created_at.year}</a>} %>
       <%= %Q{</div>} %>
       <% end %>
     </div>

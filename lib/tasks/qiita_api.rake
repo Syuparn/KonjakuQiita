@@ -108,15 +108,19 @@ namespace :qiita_api do
     end
   end
 
-  def todays_updating_range(n_max)
-    # separate range of length n_max (0..n_max-1) into 7 days
-    # Sun: 0..n_max/7-1, Mon: n_max/7..2*n_max/7-1, ... Sat: 6*n_max/7..n_max-1
-    # this is used for Heroku Scheduler, which only supports 1-day each task
-    day = DateTime.now.wday
-    if day == 6 # Sat
-      (day * n_max.div(7))..(n_max - 1)
-    else
-      (day * n_max.div(7))..((day + 1) * n_max.div(7) - 1)
+  def update_hour?()
+    # article is updated only during 0:00 ~ 9:00
+    DateTime.now.hour < 10
+  end
+
+  def this_hours_updating_range()
+    # NUM_TAGS / 10 articles in every hour during 0:00 ~ 9:00
+    # this is used for Heroku Scheduler, which only supports 1-hour each task
+    dt = DateTime.now
+    if update_hour?
+      min = dt.wday * NUM_TAGS + dt.hour * NUM_TAGS.div(10)
+      max = dt.wday * NUM_TAGS + (dt.hour + 1) * NUM_TAGS.div(10) - 1
+      min..max
     end
   end
 
@@ -132,9 +136,11 @@ namespace :qiita_api do
   desc "update article table by Qiita API"
   task :update_articles do
     tag_names = Tag.order("num_articles desc").all.map { |t| t.name }
-    tag_names[todays_updating_range(NUM_TAGS)].each do |tag_name|
-      update_articles(tag_name)
-      sleep(5)
+    if update_hour?
+      tag_names[this_hours_updating_range].each do |tag_name|
+        update_articles(tag_name)
+        sleep(5)
+      end
     end
   end
 

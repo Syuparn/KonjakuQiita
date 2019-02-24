@@ -120,11 +120,12 @@ namespace :qiita_api do
     end
   end
 
-  desc "update tag table (the most popular #{NUM_TAGS}) by Qiita API"
+  desc "update tag table (the most popular #{7 * NUM_TAGS}) by Qiita API"
   task :update_tags do
+    # update schedule; Sun: 1, Mon: 2, ..., Sat: 7
+    todays_updating_page = DateTime.now.wday + 1
     # already sorted by items_count (= num_articles)
-    #TODO: change page_num by date
-    new_tags = fetch_tags(1)
+    new_tags = fetch_tags(todays_updating_page)
     record_tags(new_tags)
   end
 

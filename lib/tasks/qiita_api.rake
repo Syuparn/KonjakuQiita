@@ -124,6 +124,15 @@ namespace :qiita_api do
     end
   end
 
+  desc "update tag table (the most popular #{7 * NUM_TAGS}) by Qiita API (designate range by hand)"
+  # NOTE: CANNOT use "task :update_tags_by_index, ['idx'] => :environment"
+  # because :environment can only used in Rails
+  task :update_tags_by_index, :idx do |_, args|
+    # already sorted by items_count (= num_articles)
+    new_tags = fetch_tags(args.idx.to_i)
+    record_tags(new_tags)
+  end
+
   desc "update tag table (the most popular #{7 * NUM_TAGS}) by Qiita API"
   task :update_tags do
     # update schedule; Sun: 1, Mon: 2, ..., Sat: 7
@@ -141,6 +150,17 @@ namespace :qiita_api do
         update_articles(tag_name)
         sleep(5)
       end
+    end
+  end
+
+  desc "update article table by Qiita API (designate range by hand)"
+  # NOTE: CANNOT use ":update_articles_by_index, ['start', 'end'] => :environment"
+  # because :environment can only used in Rails
+  task :update_articles_by_index, :start, :end do |_, args|
+    tag_names = Tag.order("num_articles desc").all.map { |t| t.name }
+    tag_names[args.start.to_i..args.end.to_i].each do |tag_name|
+      update_articles(tag_name)
+      sleep(5)
     end
   end
 

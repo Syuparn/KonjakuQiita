@@ -39,7 +39,7 @@ namespace :qiita_api do
   end
 
   def fetch_articles(tag_name, page_num, before: nil)
-    uri = "https://qiita.com/api/v2/items?page=#{page_num}&per_page=#{PER_PAGE}&query=tag:#{tag_name}"
+    uri = URI.encode("https://qiita.com/api/v2/items?page=#{page_num}&per_page=#{PER_PAGE}&query=tag:#{tag_name}")
     uri += "+created:<=#{before}" if before
     begin
       f = open(uri, 'Content-Type' => 'application/json')

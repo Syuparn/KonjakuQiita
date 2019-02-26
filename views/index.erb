@@ -29,13 +29,12 @@
     </div>
   </nav>
 
-    <div class="row">
-      <% @tags.each do |tag| %>
-      <%= %Q{<div class="col-6 col-md-3 col-lg-2 mt-1 mb-1 ml-1 mr-1">} %>
-        <%= %Q{<a class="btn btn-success" href="./ranking/#{tag.name}">#{tag.name}: #{tag.created_at.year}</a>} %>
-      <%= %Q{</div>} %>
-      <% end %>
-    </div>
+  <div class="row">
+    <% @tags.each do |tag| %>
+    <%= %Q{<div class="col-6 col-md-3 col-lg-2 mt-1 mb-1 ml-1 mr-1">} %>
+      <%= %Q{<a class="btn btn-success" href="./ranking/#{tag.name}">#{tag.name}: #{tag.created_at.year}</a>} %>
+    <%= %Q{</div>} %>
+    <% end %>
   </div>
 
   <!-- jQuery、Popper.js、Bootstrap JS (Required for Bootstrap) -->

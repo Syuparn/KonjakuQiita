@@ -23,8 +23,28 @@ def diff_year_notation_color(diff_year)
   end
 end
 
+def colorcode(colorhash)
+  %Q{##{colorhash[:r].to_s(16)}#{colorhash[:g].to_s(16)}#{colorhash[:b].to_s(16)}}
+end
+
+def diff_year_tag_color(diff_year)
+  # color gradation depending on diff_year
+  # diff_year==0(now): "success" in Bootstrap <-> diff_year==10(10 years ago): yellow
+  success_color = {r: 40, g: 167, b: 69}
+  old_color = {r: 225, g: 219, b: 103}
+  if diff_year >= 10
+    # use color old directly
+    colorcode(old_color)
+  else
+    gradated_color = success_color.map {|k,v|
+      [k, ((v*(10-diff_year) + old_color[k]*diff_year)/10).to_i]}.to_h
+    colorcode(gradated_color)
+  end
+end
+
 get '/' do
   @tags = Tag.order("num_articles desc").all
+  @colors = @tags.map {|tag| diff_year_tag_color(diff_year(tag.created_at))}
   erb :index
 end
 

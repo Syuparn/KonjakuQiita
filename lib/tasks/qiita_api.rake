@@ -109,8 +109,8 @@ namespace :qiita_api do
   end
 
   def update_hour?()
-    # article is updated only during 0:00 ~ 9:00
-    DateTime.now.hour < 10
+    # article is updated only during 0:00 ~ 9:00 (fixed to Japan TimeZone!)
+    DateTime.now.new_offset('+09:00').hour < 10
   end
 
   def this_hours_updating_range()

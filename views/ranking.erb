@@ -34,15 +34,26 @@
     <h2><center><small>Since <%= %Q{#{@oldest_article.created_at.strftime('%Y-%m-%d')}} %></small></center></h2>
     <hr class="style-one">
     <% if @notation_color %>
-    <%= %Q{<div class="card card-lg pt-2 pb-2 pl-2 pr-2 mt-2 mb-2" style="color:#692825; background-color:#{@notation_color};">} %>
+    <%= %Q{<div class="card card-lg pt-2 pb-2 pl-2 pr-2 mt-2 mb-3" style="color:#692825; background-color:#{@notation_color};">} %>
         <%= %Q{　このタグは使われ始めてから#{@diff_year}年以上が経過しています。} %>
     <%= %Q{</div>} %>
     <% end %>
     <h2><span class="badge badge-pill badge-secondary"><%= %Q{#{@tag}} %></span> が付いている最旧記事</h2>
-    <div>
-      <% [@oldest_article].each do |a| %>
-      <%= "<li> #{a.name}: #{a.num_likes} #{a.tag1} #{a.tag2} #{a.tag3} #{a.tag4} #{a.tag5}</li>" %>
-      <% end %>
+    <div class="card">
+      <div class="card-body">
+        <% [@oldest_article].each do |a| %>
+        <h4 class="card-title"><%= %Q{<a class="text-dark" href="#{a.url}">#{a.name}</a>} %></h4>
+        <p class="card-text text-secondary">
+          <%= %Q{ Created #{a.created_at.strftime('%Y-%m-%d')} &nbsp; Updated #{a.updated_at.strftime('%Y-%m-%d')}} %><br>
+          <%= %Q{ By #{a.url} &nbsp; #{a.num_likes} いいね} %>
+        </p>
+        <p class="card-text text-secondary">
+          <% [a.tag1, a.tag2, a.tag3, a.tag4, a.tag5].compact.each do |tag| %>
+          <%= %Q{<a href="/ranking/#{tag}" class="badge badge-secondary">#{tag}</a>} %>
+          <% end %>
+        </p>
+        <% end %>
+      </div>
     </div>
   </div>
   <!-- jQuery、Popper.js、Bootstrap JS (Required for Bootstrap) -->

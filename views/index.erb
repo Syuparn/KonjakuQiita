@@ -29,13 +29,15 @@
     </div>
   </nav>
 
-  <div class="row">
-    <% @tags.each do |tag| %>
-    <%= %Q{<div class="col-5 col-md-3 col-lg-2 mt-1 mb-1 ml-1 mr-1">} %>
-      <%= %Q{<a class="btn btn-success text-truncate" style="max-width: 160px;" href="./ranking/#{tag.name}"> #{tag.created_at.year}: #{tag.name}</a>} %>
-    <%= %Q{</div>} %>
-    <% end %>
-  </div>
+  <div class="container">
+    <div class="row">
+      <% @tags.each do |tag| %>
+      <%= %Q{<div class="col-5 col-md-3 col-lg-2 mt-1 mb-1 ml-1 mr-1">} %>
+        <%= %Q{<a class="btn btn-success text-truncate" style="max-width: 160px;" href="./ranking/#{tag.name}"> #{tag.created_at.year}: #{tag.name}</a>} %>
+      <%= %Q{</div>} %>
+      <% end %>
+      </div>
+    </div>
 
   <!-- jQuery、Popper.js、Bootstrap JS (Required for Bootstrap) -->
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

@@ -36,8 +36,8 @@
     <h2><center><small>Since <%= %Q{#{@oldest_article.created_at.strftime('%Y-%m-%d')}} %></small></center></h2>
     <hr class="style-one">
     <% if @notation_color %>
-    <%= %Q{<div class="card card-lg pt-2 pb-2 pl-2 pr-2 mt-2 mb-3" style="color:#692825; background-color:#{@notation_color};">} %>
-        <%= %Q{　このタグは使われ始めてから#{@diff_year}年以上が経過しています。} %>
+    <%= %Q{<div class="card card-lg pt-3 pb-3 pl-3 pr-3 mt-2 mb-3" style="color:#692825; background-color:#{@notation_color};">} %>
+        <i class="fas fa-exclamation-triangle"><%= %Q{ このタグは使われ始めてから#{@diff_year}年以上が経過しています。} %></i>
     <%= %Q{</div>} %>
     <% end %>
     <h2><span class="badge badge-pill badge-secondary"><%= %Q{#{@tag}} %></span> が付いている最旧記事</h2>

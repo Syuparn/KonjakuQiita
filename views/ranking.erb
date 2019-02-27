@@ -45,7 +45,8 @@
         <h4 class="card-title"><%= %Q{<a class="text-dark" href="#{a.url}">#{a.name}</a>} %></h4>
         <p class="card-text text-secondary">
           <%= %Q{ Created #{a.created_at.strftime('%Y-%m-%d')} &nbsp; Updated #{a.updated_at.strftime('%Y-%m-%d')}} %><br>
-          <%= %Q{ By #{a.url} &nbsp; #{a.num_likes} いいね} %>
+          <% author = a.url.match(%r{https://qiita.com/([^/]+)/})[1] %>
+          <%= %Q{ By #{author} &nbsp; #{a.num_likes} いいね} %>
         </p>
         <p class="card-text text-secondary">
           <% [a.tag1, a.tag2, a.tag3, a.tag4, a.tag5].compact.each do |tag| %>

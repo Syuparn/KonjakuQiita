@@ -46,7 +46,7 @@
         </div>
       </div>
 
-    <div class="row">
+    <div class="row mb-5">
       <% @tags.zip(@colors).each do |tag, color| %>
       <%= %Q{<div class="col-5 col-md-3 col-lg-2 mt-1 mb-1 ml-1 mr-1">} %>
         <%= %Q{<a class="btn btn-success text-truncate" style="max-width:160px; background-color:#{color}; border-color:#{color};" href="./ranking/#{tag.name}"> #{tag.created_at.year}: #{tag.name}</a>} %>

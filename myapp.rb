@@ -70,3 +70,7 @@ get '/ranking/*' do |tag_name|
   @notation_color = diff_year_notation_color(@diff_year)
   erb :ranking
 end
+
+get '/about' do
+  erb :about
+end

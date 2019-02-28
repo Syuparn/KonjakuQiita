@@ -43,7 +43,7 @@
     <%= %Q{</div>} %>
     <% end %>
     <h2><span class="badge badge-pill badge-secondary"><%= %Q{#{@tag}} %></span> が付いている最旧記事</h2>
-    <div class="card">
+    <div class="card mb-3">
       <div class="card-body">
         <% [@oldest_article].each do |a| %>
         <h4 class="card-title"><%= %Q{<a class="text-dark" href="#{a.url}">#{a.name}</a>} %></h4>
@@ -61,6 +61,13 @@
       </div>
     </div>
   </div>
+
+  <footer class="footer bg-success mt-auto text-white pb-1">
+    <div class="container">
+      <span>KonjakuQiita &nbsp; 2019-</span>
+    </div>
+  </footer>
+
   <!-- jQuery、Popper.js、Bootstrap JS (Required for Bootstrap) -->
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

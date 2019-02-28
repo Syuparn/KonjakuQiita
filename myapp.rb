@@ -74,3 +74,10 @@ end
 get '/about' do
   erb :about
 end
+
+get '/search_tags' do
+  @tags = Tag.where('name like ?', "%#{params[:inputTagName]}%").order("name asc").all
+  @colors = @tags.map {|tag| diff_year_tag_color(diff_year(tag.created_at))}
+  @sort_key = :name
+  erb :index
+end

@@ -35,6 +35,17 @@
 
   <div class="container mb-3">
     <h1>タグ一覧</h1>
+    <hr class="style-one">
+
+      <div class="mt-2 mb-5 ml-2 mr-2">
+        <span class="h3 text-secondary">Sort by: &nbsp;</span>
+        <div class="btn-group" role="group" aria-label="Sort by">
+          <%= %Q{<button type="button" onclick="location.href='/sortby_name'" class="btn btn-lg btn-outline-success pt-3 pb-3 #{'active' if @sort_key == :name}"><i class="fas fa-sort-alpha-down"></i> Name</button>} %>
+          <%= %Q{<button type="button" onclick="location.href='/'" class="btn btn-lg btn-outline-success pt-3 pb-3 #{'active' if @sort_key == :article}"><i class="far fa-newspaper"></i> Articles</button>} %>
+          <%= %Q{<button type="button" onclick="location.href='/sortby_year'" class="btn btn-lg btn-outline-success pt-3 pb-3 #{'active' if @sort_key == :year}"><i class="far fa-calendar-alt"></i> Year</button>} %>
+        </div>
+      </div>
+
     <div class="row">
       <% @tags.zip(@colors).each do |tag, color| %>
       <%= %Q{<div class="col-5 col-md-3 col-lg-2 mt-1 mb-1 ml-1 mr-1">} %>

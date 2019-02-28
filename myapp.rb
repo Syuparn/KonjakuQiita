@@ -45,6 +45,21 @@ end
 get '/' do
   @tags = Tag.order("num_articles desc").all
   @colors = @tags.map {|tag| diff_year_tag_color(diff_year(tag.created_at))}
+  @sort_key = :article
+  erb :index
+end
+
+get '/sortby_name' do
+  @tags = Tag.order("name asc").all
+  @colors = @tags.map {|tag| diff_year_tag_color(diff_year(tag.created_at))}
+  @sort_key = :name
+  erb :index
+end
+
+get '/sortby_year' do
+  @tags = Tag.order("created_at asc").all
+  @colors = @tags.map {|tag| diff_year_tag_color(diff_year(tag.created_at))}
+  @sort_key = :year
   erb :index
 end
 

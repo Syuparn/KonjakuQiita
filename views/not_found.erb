@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title><%= "#{@tag}-KonjakuQiita" %></title>
+  <!-- favicon -->
+  <link rel="icon" href="/ico/favicon.ico" type="image/x-icon">
+  <!-- viewport meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <!-- Font Awesome (emoticons) -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-success mb-3 sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="/"><b>KonjakuQiita</b> <small>タグから歴史を振り返る</small></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+          <!-- 以下のAboutを右寄せにするためのダミーバー -->
+        </ul>
+        <ul class="navbar-nav">　
+          <li class="nav-item">
+            <a class="nav-link" href="/about">About</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mb-5">
+    <h1><center>Tag <span class="badge badge-pill badge-secondary"><%= %Q{#{@tag}} %></span></center></h1>
+    <h2><center><small>Not found...</small></center></h2>
+    <hr class="style-one">
+    <h2><i class="fas fa-sad-tear"></i> Sorry for inconvenience...</h2>
+    <div>
+      <p>考えられる原因</p>
+      <ul>
+        <li>まだタグデータが取得されていない</li>
+        <li>タグが集計対象外(DBのサイズ上、最も多く使われた700タグのみ集計しています。)</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer class="footer bg-secondary mt-auto text-white fixed-bottom pb-1">
+    <div class="container">
+      <span>KonjakuQiita &nbsp; 2019-</span>
+    </div>
+  </footer>
+
+  <!-- jQuery、Popper.js、Bootstrap JS (Required for Bootstrap) -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>

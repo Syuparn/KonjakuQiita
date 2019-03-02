@@ -66,9 +66,13 @@ end
 get '/ranking/*' do |tag_name|
   @tag = tag_name
   @oldest_article = Article.where(tag1: @tag).order("num_likes desc").all[0]
-  @diff_year = diff_year(@oldest_article.created_at)
-  @notation_color = diff_year_notation_color(@diff_year)
-  erb :ranking
+  if @oldest_article.nil?
+    erb :not_found
+  else
+    @diff_year = diff_year(@oldest_article.created_at)
+    @notation_color = diff_year_notation_color(@diff_year)
+    erb :ranking
+  end
 end
 
 get '/about' do

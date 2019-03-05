@@ -39,10 +39,14 @@ namespace :qiita_api do
   end
 
   def fetch_articles(tag_name, page_num, before: nil)
-    uri = URI.encode("https://qiita.com/api/v2/items?page=#{page_num}&per_page=#{PER_PAGE}&query=")
-    # replace "+" into "%2b" otherwise tags with "+" will be ignored
-    # i.e.: "C++" -> "C  " ("+" is treated as sanitized space)
-    uri += "tag:#{tag_name.gsub(/\+/, '%2b')}"
+    if tag_name.include?('+')
+      uri = URI.encode("https://qiita.com/api/v2/items?page=#{page_num}&per_page=#{PER_PAGE}&query=")
+      # replace "+" into "%2b" otherwise tags with "+" will be ignored
+      # i.e.: "C++" -> "C  " ("+" is treated as sanitized space)
+      uri += "tag:#{tag_name.gsub(/\+/, '%2b')}"
+    else
+      uri = URI.encode("https://qiita.com/api/v2/items?page=#{page_num}&per_page=#{PER_PAGE}&query=tag:#{tag_name}")
+    end
     uri += "+created:<=#{before}" if before
     begin
       f = open(uri, 'Content-Type' => 'application/json')

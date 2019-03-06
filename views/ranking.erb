@@ -37,7 +37,7 @@
         </p>
         <p class="card-text text-secondary">
           <% [a.tag1, a.tag2, a.tag3, a.tag4, a.tag5].compact.each do |tag| %>
-          <%= %Q{<a href="/ranking/#{tag}" class="badge badge-secondary">#{tag}</a>} %>
+          <%= %Q{<a href="/ranking/#{tag.gsub(/#/, '%23')}" class="badge badge-secondary">#{tag}</a>} %>
           <% end %>
         </p>
         <% end %>

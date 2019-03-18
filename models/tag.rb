@@ -12,4 +12,8 @@ end
 
 
 class Tag < ActiveRecord::Base
+  def url
+    # replace "#" to %23 not to be treated as sanitized space
+    "/ranking/#{name.gsub(/#/, '%23')}"
+  end
 end

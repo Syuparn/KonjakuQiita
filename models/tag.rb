@@ -16,4 +16,8 @@ class Tag < ActiveRecord::Base
     # replace "#" to %23 not to be treated as sanitized space
     "/ranking/#{name.gsub(/#/, '%23')}"
   end
+
+  def year
+    created_at.year
+  end
 end

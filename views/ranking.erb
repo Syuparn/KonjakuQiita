@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <title><%= "#{@tag}-KonjakuQiita" %></title>
+  <title><%= @tag %>-KonjakuQiita</title>
   <!-- favicon -->
   <link rel="icon" href="/ico/favicon.ico" type="image/x-icon">
   <!-- viewport meta -->
@@ -17,27 +17,26 @@
   <%= render(:erb, :'parts/navbar') %>
 
   <div class="container mb-5">
-    <h1><center>Tag <span class="badge badge-pill badge-secondary"><%= %Q{#{@tag}} %></span></center></h1>
-    <h2><center><small>Since <%= %Q{#{@oldest_article.created_at.strftime('%Y-%m-%d')}} %></small></center></h2>
+    <h1><center>Tag <span class="badge badge-pill badge-secondary"><%= @tag %></span></center></h1>
+    <h2><center><small>Since <%= @oldest_article.formatted_created_at %></small></center></h2>
     <hr class="style-one">
     <% if @notation_color %>
-    <%= %Q{<div class="card card-lg pt-3 pb-3 pl-3 pr-3 mt-2 mb-3" style="color:#692825; background-color:#{@notation_color};">} %>
-        <i class="fas fa-exclamation-triangle"><%= %Q{ このタグは使われ始めてから#{@diff_year}年以上が経過しています。} %></i>
-    <%= %Q{</div>} %>
+    <div class="card card-lg pt-3 pb-3 pl-3 pr-3 mt-2 mb-3" style="color:#692825; background-color:<%= @notation_color %>;">
+        <i class="fas fa-exclamation-triangle">このタグは使われ始めてから<%= @diff_year %>年以上が経過しています。</i>
+    </div>
     <% end %>
-    <h2><span class="badge badge-pill badge-secondary"><%= %Q{#{@tag}} %></span> が付いている最旧記事</h2>
+    <h2><span class="badge badge-pill badge-secondary"><%= @tag %></span> が付いている最旧記事</h2>
     <div class="card mb-3">
       <div class="card-body">
         <% [@oldest_article].each do |a| %>
-        <h4 class="card-title"><%= %Q{<a class="text-dark" href="#{a.url}">#{a.name}</a>} %></h4>
+        <h4 class="card-title"><a class="text-dark" href="<%= a.url %>"><%= a.name %></a></h4>
         <p class="card-text text-secondary">
-          <%= %Q{ Created #{a.created_at.strftime('%Y-%m-%d')} &nbsp; Updated #{a.updated_at.strftime('%Y-%m-%d')}} %><br>
-          <% author = a.url.match(%r{https://qiita.com/([^/]+)/})[1] %>
-          <%= %Q{ By #{author} &nbsp; <i class="fas fa-thumbs-up"></i> #{a.num_likes}} %>
+          Created <%= a.formatted_created_at %> &nbsp; Updated <%= a.formatted_updated_at %><br>
+          By <%= a.author %> &nbsp; <i class="fas fa-thumbs-up"></i> <%= a.num_likes %>
         </p>
         <p class="card-text text-secondary">
-          <% [a.tag1, a.tag2, a.tag3, a.tag4, a.tag5].compact.each do |tag| %>
-          <%= %Q{<a href="/ranking/#{tag.gsub(/#/, '%23')}" class="badge badge-secondary">#{tag}</a>} %>
+          <% a.tags.zip(a.tag_urls).each do |tag, url| %>
+          <a href="<%= url %>" class="badge badge-secondary"><%= tag %></a>
           <% end %>
         </p>
         <% end %>

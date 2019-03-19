@@ -17,22 +17,22 @@
   <%= render(:erb, :'parts/navbar') %>
 
   <div class="container mb-3">
-    <form class="mb-5" action="/search_tags/">
+    <form class="mb-5" action="/search_tags/sortby_<%= @sort_controller.sort_key %>">
       <div class="form-group row">
         <input type="text" class="form-control col-7 col-md-6 col-lg-5 mr-1" name="inputTagName" placeholder="Tag Name">
         <button type="submit" class="btn btn-success col-3 col-md-2 col-lg-1 ml-1"><i class="fas fa-search"></i></button>
       </div>
     </form>
 
-    <h1><i class="fas fa-tags"></i>: <%= @searched_by %></h1>
+    <h1><i class="fas fa-tags"></i>: <%= @search_controller.description %></h1>
     <hr class="style-one">
 
       <div class="mt-2 mb-5 ml-2 mr-2">
         <span class="h3 text-secondary">Sort by: &nbsp;</span>
         <div class="btn-group" role="group" aria-label="Sort by">
-          <%= %Q{<button type="button" onclick="location.href='#{@main_route}sortby_name#{%Q{?inputTagName=#{@search_key}} if defined?(@search_key)}'" class="btn btn-lg btn-outline-success pt-3 pb-3 #{'active' if @sort_key == :name}"><i class="fas fa-sort-alpha-down"></i> Name</button>} %>
-          <%= %Q{<button type="button" onclick="location.href='#{@main_route}#{%Q{?inputTagName=#{@search_key}} if defined?(@search_key)}'" class="btn btn-lg btn-outline-success pt-3 pb-3 #{'active' if @sort_key == :article}"><i class="far fa-newspaper"></i> Articles</button>} %>
-          <%= %Q{<button type="button" onclick="location.href='#{@main_route}sortby_year#{%Q{?inputTagName=#{@search_key}} if defined?(@search_key)}'" class="btn btn-lg btn-outline-success pt-3 pb-3 #{'active' if @sort_key == :year}"><i class="far fa-calendar-alt"></i> Year</button>} %>
+          <%= %Q{<button type="button" onclick="location.href='#{@search_controller.sorted_page_uri :name}'" class="btn btn-lg btn-outline-success pt-3 pb-3 #{@sort_controller.button_status :name}"><i class="fas fa-sort-alpha-down"></i> Name</button>} %>
+          <%= %Q{<button type="button" onclick="location.href='#{@search_controller.sorted_page_uri :article}'" class="btn btn-lg btn-outline-success pt-3 pb-3 #{@sort_controller.button_status :article}"><i class="far fa-newspaper"></i> Articles</button>} %>
+          <%= %Q{<button type="button" onclick="location.href='#{@search_controller.sorted_page_uri :year}'" class="btn btn-lg btn-outline-success pt-3 pb-3 #{@sort_controller.button_status :year}"><i class="far fa-calendar-alt"></i> Year</button>} %>
         </div>
       </div>
 

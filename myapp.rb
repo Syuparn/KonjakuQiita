@@ -6,37 +6,75 @@ require 'sinatra/activerecord'
 require './models/tag'
 require './models/article'
 
-tag_sort_order = {
-  article: 'num_articles desc',
-  name: 'name asc',
-  year: 'created_at asc'
-}
 
-sorted_page_route = {
-  article: '', # index page '/' == sorted by articles
-  name: 'sortby_name',
-  year: 'sortby_year'
-}
+class SortController
+  def initialize(sort_key)
+    @sort_key = sort_key
+  end
 
-sorted_page_route.each do |sort_key, page_route|
-  get "/#{page_route}" do
-    @tags = Tag.order(tag_sort_order[sort_key]).all
+  def order
+    {
+      article: 'num_articles desc',
+      name: 'name asc',
+      year: 'created_at asc'
+    }[@sort_key]
+  end
+
+  def button_status(key)
+    @sort_key == key ? 'active' : ''
+  end
+
+  attr_reader :sort_key
+end
+
+
+class SearchController
+  def initialize(search_key=nil)
+    @search_key = search_key
+  end
+
+  def description
+    @search_key ? %Q{contains "#{@search_key}"} : "all"
+  end
+
+  def sorted_page_uri(sort_key)
+    if @search_key
+      # add query
+      "#{sorted_page_url(sort_key)}?inputTagName=#{@search_key}"
+    else
+      sorted_page_url(sort_key)
+    end
+  end
+
+  private
+  def sorted_page_url(sort_key)
+    sort_url = "sortby_#{sort_key}"
+    @search_key ? "/search_tags/#{sort_url}" : "/#{sort_url}"
+  end
+end
+
+
+get '/' do
+  redirect '/sortby_article'
+end
+
+[:article, :name, :year].each do |sort_key|
+  get "/sortby_#{sort_key}" do
+    @sort_controller = SortController.new(sort_key)
+    @tags = Tag.order(@sort_controller.order).all
     # FIXME: hide tags untied with articles (tentatively hide tags created_at>=2019)
     @tags = @tags.select {|t| t.year < 2019}
-    @sort_key = sort_key
-    @searched_by = 'all'
-    @main_route = '/'
+    @search_controller = SearchController.new()
     erb :index
   end
 
-  get "/search_tags/#{page_route}" do
-    @search_key = params[:inputTagName]
-    @tags = Tag.where('name like ?', "%#{@search_key}%").order(tag_sort_order[sort_key]).all
+  get "/search_tags/sortby_#{sort_key}" do
+    @sort_controller = SortController.new(sort_key)
+    search_key = params[:inputTagName]
+    @tags = Tag.where('name like ?', "%#{search_key}%").order(@sort_controller.order).all
     # FIXME: hide tags untied with articles (tentatively hide tags created_at>=2019)
     @tags = @tags.select {|t| t.year < 2019}
-    @sort_key = sort_key
-    @searched_by = %Q{contains "#{@search_key}"}
-    @main_route = '/search_tags/'
+    @search_controller = SearchController.new(search_key)
     erb :index
   end
 end

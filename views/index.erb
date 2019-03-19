@@ -30,9 +30,12 @@
       <div class="mt-2 mb-5 ml-2 mr-2">
         <span class="h3 text-secondary">Sort by: &nbsp;</span>
         <div class="btn-group" role="group" aria-label="Sort by">
-          <%= %Q{<button type="button" onclick="location.href='#{@search_controller.sorted_page_uri :name}'" class="btn btn-lg btn-outline-success pt-3 pb-3 #{@sort_controller.button_status :name}"><i class="fas fa-sort-alpha-down"></i> Name</button>} %>
-          <%= %Q{<button type="button" onclick="location.href='#{@search_controller.sorted_page_uri :article}'" class="btn btn-lg btn-outline-success pt-3 pb-3 #{@sort_controller.button_status :article}"><i class="far fa-newspaper"></i> Articles</button>} %>
-          <%= %Q{<button type="button" onclick="location.href='#{@search_controller.sorted_page_uri :year}'" class="btn btn-lg btn-outline-success pt-3 pb-3 #{@sort_controller.button_status :year}"><i class="far fa-calendar-alt"></i> Year</button>} %>
+          <% icon_classes = {name: "fas fa-sort-alpha-down", article: "far fa-newspaper", year: "far fa-calendar-alt"} %>
+          <% [:name, :article, :year].each do |key| %>
+          <button type="button" onclick="location.href='<%= @search_controller.sorted_page_uri key %>'" class="btn btn-lg btn-outline-success pt-3 pb-3 <%= @sort_controller.button_status key %>">
+            <i class="<%= icon_classes[key] %>"></i> <%= key.to_s.capitalize %>
+          </button>
+          <% end %>
         </div>
       </div>
 

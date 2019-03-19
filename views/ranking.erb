@@ -20,9 +20,9 @@
     <h1><center>Tag <span class="badge badge-pill badge-secondary"><%= @tag %></span></center></h1>
     <h2><center><small>Since <%= @oldest_article.formatted_created_at %></small></center></h2>
     <hr class="style-one">
-    <% if @notation_color %>
-    <div class="card card-lg pt-3 pb-3 pl-3 pr-3 mt-2 mb-3" style="color:#692825; background-color:<%= @notation_color %>;">
-        <i class="fas fa-exclamation-triangle">このタグは使われ始めてから<%= @diff_year %>年以上が経過しています。</i>
+    <% if @oldest_article.notation_color %>
+    <div class="card card-lg pt-3 pb-3 pl-3 pr-3 mt-2 mb-3" style="color:#692825; background-color:<%= @oldest_article.notation_color %>;">
+        <i class="fas fa-exclamation-triangle">このタグは使われ始めてから<%= @oldest_article.diff_year %>年以上が経過しています。</i>
     </div>
     <% end %>
     <h2><span class="badge badge-pill badge-secondary"><%= @tag %></span> が付いている最旧記事</h2>

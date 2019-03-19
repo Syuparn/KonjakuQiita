@@ -33,4 +33,22 @@ class Article < ActiveRecord::Base
     # replace "#" to %23 not to be treated as sanitized space
     tags.map {|tag| "/ranking/#{tag.gsub(/#/, '%23')}"}
   end
+
+  def diff_year
+    today = Time.now
+    ((today - created_at) / (365 * 24 * 60 * 60)).to_i
+  end
+
+  def notation_color
+    case diff_year
+    when 1..2
+      '#fff3cd'
+    when 3..4
+      '#ffe79a'
+    when 5..Float::INFINITY
+      '#ffdb67'
+    else
+      nil
+    end
+  end
 end

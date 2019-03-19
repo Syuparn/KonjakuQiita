@@ -39,7 +39,7 @@ sorted_page_route.each do |sort_key, page_route|
   get "/#{page_route}" do
     @tags = Tag.order(tag_sort_order[sort_key]).all
     # FIXME: hide tags untied with articles (tentatively hide tags created_at>=2019)
-    @tags = @tags.select {|t| t.created_at.year < 2019}
+    @tags = @tags.select {|t| t.year < 2019}
     @sort_key = sort_key
     @searched_by = 'all'
     @main_route = '/'
@@ -50,7 +50,7 @@ sorted_page_route.each do |sort_key, page_route|
     @search_key = params[:inputTagName]
     @tags = Tag.where('name like ?', "%#{@search_key}%").order(tag_sort_order[sort_key]).all
     # FIXME: hide tags untied with articles (tentatively hide tags created_at>=2019)
-    @tags = @tags.select {|t| t.created_at.year < 2019}
+    @tags = @tags.select {|t| t.year < 2019}
     @sort_key = sort_key
     @searched_by = %Q{contains "#{@search_key}"}
     @main_route = '/search_tags/'
